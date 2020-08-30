@@ -2,4 +2,7 @@
     <string name="app_name">GADs LeaderBoard</string>
     <string name="leaderboard">LEADERBOARD</string>
     <string name="submit">Submit</string>
+    <string name="_223_learning_hours_kenya">223 learning hours, Kenya.</string>
+    <string name="john_doe">John Doe</string>
+    <string name="badge_image">Badge Image</string>
 </resources>
