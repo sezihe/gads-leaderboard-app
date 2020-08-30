@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // assign views
+        // initialize views
         mTabLayout = findViewById(R.id.mtabLayout);
         mViewPager = findViewById(R.id.mviewPager);
 
@@ -48,6 +48,5 @@ public class MainActivity extends AppCompatActivity {
     private void addFragments() {
         mViewPagerAdapter.addFragment(mLearningLeadersFrag, "Learning Leaders");
         mViewPagerAdapter.addFragment(mSkillIQLeadersFrag, "Skill IQ Leaders");
-
     }
 }

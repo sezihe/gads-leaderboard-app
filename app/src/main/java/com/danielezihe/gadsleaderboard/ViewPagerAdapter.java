@@ -35,6 +35,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         return mFragmentTitle.get(position);
     }
 
+    // add fragments to fragment arrayList
     public void addFragment(Fragment frag, String fragTitile) {
         mFragmentArrayList.add(frag);
         mFragmentTitle.add(fragTitile);
