@@ -5,4 +5,12 @@
     <string name="_223_learning_hours_kenya">223 learning hours, Kenya.</string>
     <string name="john_doe">John Doe</string>
     <string name="badge_image">Badge Image</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email_address">Email Address</string>
+    <string name="project_on_github_link">Project on GITHUB (link)</string>
+    <string name="back_button_desc">Back Button</string>
+    <string name="gads_logo_desc">GADs Logo</string>
+    <string name="submit_button_desc">Submit Button</string>
+    <string name="project_submission">Project Submission</string>
 </resources>

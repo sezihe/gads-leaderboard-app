@@ -4,7 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -12,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
     TabLayout mTabLayout;
     ViewPager mViewPager;
+    Button mSubmitProjectBtn;
 
     ViewPagerAdapter mViewPagerAdapter;
 
@@ -26,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         // initialize views
         mTabLayout = findViewById(R.id.mtabLayout);
         mViewPager = findViewById(R.id.mviewPager);
+        mSubmitProjectBtn = findViewById(R.id.submitProjectBtn);
 
         // initialize viewPagerAdapter
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
@@ -43,6 +48,19 @@ public class MainActivity extends AppCompatActivity {
         // assign viewPager to tabLayout
         mTabLayout.setupWithViewPager(mViewPager);
 
+        // handle submitBtn clickListener
+        handleSubmitBtnClickListener();
+
+    }
+
+    private void handleSubmitBtnClickListener() {
+        mSubmitProjectBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent submitProjectActivity = new Intent(getApplicationContext(), SubmitProjectActivity.class);
+                startActivity(submitProjectActivity);
+            }
+        });
     }
 
     private void addFragments() {

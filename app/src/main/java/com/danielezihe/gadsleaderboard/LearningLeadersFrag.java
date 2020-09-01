@@ -28,6 +28,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class LearningLeadersFrag extends Fragment {
 
@@ -78,6 +80,14 @@ public class LearningLeadersFrag extends Fragment {
                         mTopLearners.add(new ItemsHelper(name, hours, country, badgeUrl, false));
 
                     }
+                    // sort arrayList by the highest hours
+                    Collections.sort(mTopLearners, new Comparator<ItemsHelper>() {
+                        @Override
+                        public int compare(ItemsHelper lhs, ItemsHelper rhs) {
+                            return Integer.parseInt(rhs.getMhours_score()) - Integer.parseInt(lhs.getMhours_score());
+                        }
+                    });
+
                     // ArrayList has been populated, loading is done. Remove progressBar
                     mProgressBar.setVisibility(View.GONE);
 

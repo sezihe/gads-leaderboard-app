@@ -23,6 +23,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class SkillIQLeadersFrag extends Fragment {
 
@@ -72,6 +74,14 @@ public class SkillIQLeadersFrag extends Fragment {
                         // add a new Item with the values
                         mTopSkillIQ.add(new ItemsHelper(name, score, country, badgeUrl, true));
                     }
+                    // sort arrayList by the highest hours
+                    Collections.sort(mTopSkillIQ, new Comparator<ItemsHelper>() {
+                        @Override
+                        public int compare(ItemsHelper lhs, ItemsHelper rhs) {
+                            return Integer.parseInt(rhs.getMhours_score()) - Integer.parseInt(lhs.getMhours_score());
+                        }
+                    });
+
                     // ArrayList has been populated, loading is done. Remove progressBar
                     mProgressBar.setVisibility(View.GONE);
 
