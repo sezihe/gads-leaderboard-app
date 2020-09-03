@@ -4,19 +4,17 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.danielezihe.gadsleaderboard.databinding.ActivitySkillIqLeadersFragBinding;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,30 +29,29 @@ public class SkillIQLeadersFrag extends Fragment {
     public static final String URL = "https://gadsapi.herokuapp.com/api/skilliq";
     public static final String GET_GADS_TOP_SKILLIQ_REQUEST = "GET_GADS_TOP_SKILLIQ_REQUEST";
 
-
-    private RecyclerAdapter mRecyclerAdapter;
-    private ProgressBar mProgressBar;
     private ArrayList<ItemsHelper> mTopSkillIQ = new ArrayList<>();
 
-    private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLinearLayoutManager;
+    // Data-Binding layout generated class
+    ActivitySkillIqLeadersFragBinding mActivitySkillIqLeadersFragBinding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_skill_iq_leaders_frag, container, false);
+        // inflate view
+        mActivitySkillIqLeadersFragBinding = ActivitySkillIqLeadersFragBinding.inflate(inflater);
 
-        // initialize views
-        mRecyclerView = v.findViewById(R.id.recyclerView_silf);
-        mProgressBar = v.findViewById(R.id.progressBar_silf);
+        // main method
+        getAndPopulateTopSkillIqFromAPI();
 
-        // set up recyclerview
-        setUpRecyclerView();
-
-        return v;
+        return mActivitySkillIqLeadersFragBinding.getRoot();
     }
 
-    private void getTopSkillIqFromAPI() {
+    private void initTopSkillIQArrayList() {
+        // assign TopSkillIQArrayList to Layout's TopSkillIQArrayList
+        mActivitySkillIqLeadersFragBinding.setSkillIqLearnersArrList(mTopSkillIQ);
+    }
+
+    private void getAndPopulateTopSkillIqFromAPI() {
         // make a get request to the server, requesting for a jsonArray
         JsonArrayRequest jsonObjectRequestSIQ = new JsonArrayRequest(Request.Method.GET, URL, null, new Response.Listener<JSONArray>() {
             @Override
@@ -72,9 +69,9 @@ public class SkillIQLeadersFrag extends Fragment {
                         String badgeUrl = dataObj.getString("badgeUrl");
 
                         // add a new Item with the values
-                        mTopSkillIQ.add(new ItemsHelper(name, score, country, badgeUrl, true));
+                        mTopSkillIQ.add(new ItemsHelper(getContext(), name, score, country, badgeUrl, true));
                     }
-                    // sort arrayList by the highest hours
+                    // sort arrayList by the highest skill iq
                     Collections.sort(mTopSkillIQ, new Comparator<ItemsHelper>() {
                         @Override
                         public int compare(ItemsHelper lhs, ItemsHelper rhs) {
@@ -83,10 +80,11 @@ public class SkillIQLeadersFrag extends Fragment {
                     });
 
                     // ArrayList has been populated, loading is done. Remove progressBar
-                    mProgressBar.setVisibility(View.GONE);
+                    mActivitySkillIqLeadersFragBinding.progressBarSilf.setVisibility(View.GONE);
 
-                    // notify adapter that data has been added to the ArrayList
-                    mRecyclerAdapter.notifyDataSetChanged();
+                    // init SkillIQArrayList with populated ArrayList.
+                    initTopSkillIQArrayList();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                     System.err.println(e.getMessage());
@@ -104,24 +102,5 @@ public class SkillIQLeadersFrag extends Fragment {
         jsonObjectRequestSIQ.setRetryPolicy(new DefaultRetryPolicy());
         jsonObjectRequestSIQ.setTag(GET_GADS_TOP_SKILLIQ_REQUEST);
         MySingleTon.getInstance(getContext()).addToRequestQue(jsonObjectRequestSIQ);
-    }
-
-    private void setUpRecyclerView() {
-        mRecyclerView.setHasFixedSize(true);
-
-        // initialize linear layout manager passing getContext() as the param
-        mLinearLayoutManager = new LinearLayoutManager(getContext());
-
-        // initialize custom recycler Adapter
-        mRecyclerAdapter = new RecyclerAdapter(getContext(), mTopSkillIQ);
-
-        // assign my layout manager to recyclerView
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
-
-        // assign custom recycler adapter to recycler view
-        mRecyclerView.setAdapter(mRecyclerAdapter);
-
-        // populate ArrayList with values from gads-api.
-        getTopSkillIqFromAPI();
     }
 }

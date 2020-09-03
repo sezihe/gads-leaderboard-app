@@ -4,17 +4,16 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
+import com.danielezihe.gadsleaderboard.databinding.RecycleItemBinding;
 
 import java.util.ArrayList;
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RAViewHolder> {
+public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RAVBindingHolder> {
 
     private Context mContext;
     private ArrayList<ItemsHelper> mItemsHelperArrayList;
@@ -27,52 +26,48 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RAView
 
     @NonNull
     @Override
-    public RAViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RAVBindingHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // inflate layout with recycler item
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycle_item, parent, false);
-        return new RAViewHolder(view);
+        RecycleItemBinding mBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.recycle_item, parent, false);
+
+        return new RAVBindingHolder(mBinding.getRoot());
     }
 
     // bind data from Items ArrayList to our views
     @Override
-    public void onBindViewHolder(@NonNull RAViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RAVBindingHolder holder, int position) {
         ItemsHelper itemsHelper = mItemsHelperArrayList.get(position);
 
-        // use picasso to load url into the imageView. Also set the local directory image as a place holder
-        Picasso.get().load(itemsHelper.getMbadgeURL()).placeholder(itemsHelper.iconSelector()).into(holder.mItemLogo);
+        // assign itemsHelper to Layout's itemsHelper
+        holder.mRecycleItemBinding.setItemshelper(itemsHelper);
 
-        // set other values
-        holder.setNameTextView(itemsHelper.getMname());
-        holder.setAchievementTextView(itemsHelper.getSubText());
+        // set default placeholders from local directory
+        if(itemsHelper.getMisSkillIQ()) {
+            holder.mRecycleItemBinding.setPlaceholder(R.drawable.skill_iq_trimmed);
+        }
+        else {
+            holder.mRecycleItemBinding.setPlaceholder(R.drawable.top_learner_badge);
+        }
+
+        holder.mRecycleItemBinding.executePendingBindings();
     }
 
     @Override
     public int getItemCount() {
-        return mItemsHelperArrayList.size();
+        // return 0 if arrayList is null
+        return mItemsHelperArrayList == null ? 0 : mItemsHelperArrayList.size();
     }
 
     // create a class that extends recyclerView ViewHolder to help populate and get our view
-    public class RAViewHolder extends RecyclerView.ViewHolder {
-        public ImageView mItemLogo;
-        private TextView mNameTextView;
-        private TextView mAchievementTextView;
+    public class RAVBindingHolder extends RecyclerView.ViewHolder {
+        // Data-Binding layout generated class
+        RecycleItemBinding mRecycleItemBinding;
 
-        public RAViewHolder(@NonNull View itemView) {
+        public RAVBindingHolder(@NonNull View itemView) {
             super(itemView);
 
-            // initialize views
-            mItemLogo = itemView.findViewById(R.id.itemLogo);
-            mNameTextView = itemView.findViewById(R.id.nameText);
-            mAchievementTextView = itemView.findViewById(R.id.achievementText);
-        }
-
-        // setters
-        public void setNameTextView(String nameTextView) {
-            mNameTextView.setText(nameTextView);
-        }
-
-        public void setAchievementTextView(String achievementTextView) {
-            mAchievementTextView.setText(achievementTextView);
+            // bind to view
+            mRecycleItemBinding = DataBindingUtil.bind(itemView);
         }
     }
 }

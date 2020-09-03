@@ -1,57 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/black"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+<layout>
 
-    <RelativeLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:elevation="10dp"
-        android:paddingStart="35dp"
-        android:paddingEnd="20dp">
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="@string/leaderboard"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="20dp"
+            android:elevation="10dp"
+            android:paddingStart="35dp"
+            android:paddingEnd="20dp">
 
-        <Button
-            android:id="@+id/submitProjectBtn"
-            android:layout_width="125dp"
-            android:layout_height="40dp"
-            android:layout_alignParentEnd="true"
-            android:background="@drawable/submit_btn_bk"
-            android:text="@string/submit"
-            android:textAllCaps="false" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/leaderboard"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-    </RelativeLayout>
+            <Button
+                android:id="@+id/submitProjectBtn"
+                android:layout_width="125dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/submit_btn_bk"
+                android:text="@string/submit"
+                android:textAllCaps="false" />
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/mtabLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="10dp"
-        app:tabIndicatorColor="@color/white"
-        app:tabIndicatorHeight="5dp"
-        app:tabSelectedTextColor="@color/white"
-        app:tabTextAppearance="@style/CustomTextAppearanceTabLayout"
-        app:tabTextColor="@color/dark_grey" />
+        </RelativeLayout>
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/mviewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/mtabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="10dp"
+            app:tabIndicatorColor="@color/white"
+            app:tabIndicatorHeight="5dp"
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextAppearance="@style/CustomTextAppearanceTabLayout"
+            app:tabTextColor="@color/dark_grey" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/mviewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
 
-</LinearLayout>
+    </LinearLayout>
+</layout>

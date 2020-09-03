@@ -1,6 +1,7 @@
 package com.danielezihe.gadsleaderboard;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -9,28 +10,23 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.danielezihe.gadsleaderboard.databinding.ActivityMainBinding;
 import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
-
-    TabLayout mTabLayout;
-    ViewPager mViewPager;
-    Button mSubmitProjectBtn;
 
     ViewPagerAdapter mViewPagerAdapter;
 
     LearningLeadersFrag mLearningLeadersFrag;
     SkillIQLeadersFrag mSkillIQLeadersFrag;
 
+    // Data-Binding layout generated class
+    ActivityMainBinding mActivityMainBinding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // initialize views
-        mTabLayout = findViewById(R.id.mtabLayout);
-        mViewPager = findViewById(R.id.mviewPager);
-        mSubmitProjectBtn = findViewById(R.id.submitProjectBtn);
+        mActivityMainBinding = DataBindingUtil.setContentView(MainActivity.this, R.layout.activity_main);
 
         // initialize viewPagerAdapter
         mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
@@ -43,10 +39,10 @@ public class MainActivity extends AppCompatActivity {
         addFragments();
 
         // set viewPager Adapter
-        mViewPager.setAdapter(mViewPagerAdapter);
+        mActivityMainBinding.mviewPager.setAdapter(mViewPagerAdapter);
 
         // assign viewPager to tabLayout
-        mTabLayout.setupWithViewPager(mViewPager);
+        mActivityMainBinding.mtabLayout.setupWithViewPager(mActivityMainBinding.mviewPager);
 
         // handle submitBtn clickListener
         handleSubmitBtnClickListener();
@@ -54,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleSubmitBtnClickListener() {
-        mSubmitProjectBtn.setOnClickListener(new View.OnClickListener() {
+        mActivityMainBinding.submitProjectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent submitProjectActivity = new Intent(getApplicationContext(), SubmitProjectActivity.class);

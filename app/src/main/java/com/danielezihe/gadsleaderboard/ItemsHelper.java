@@ -1,5 +1,7 @@
 package com.danielezihe.gadsleaderboard;
 
+import android.content.Context;
+
 public class ItemsHelper {
 
     private String mname;
@@ -8,8 +10,11 @@ public class ItemsHelper {
     private String mbadgeURL;
     private boolean mIsSkillIQ;
 
+    private Context mContext;
+
     // constructor
-    public ItemsHelper(String name, String hours_or_score, String country, String badgeURL, boolean isSkillIQ) {
+    public ItemsHelper(Context context, String name, String hours_or_score, String country, String badgeURL, boolean isSkillIQ) {
+        mContext = context;
         mname = name;
         mhours_or_score = hours_or_score;
         mcountry = country;
@@ -34,12 +39,9 @@ public class ItemsHelper {
         return mbadgeURL;
     }
 
-
-    public int iconSelector() {
-        return mIsSkillIQ ? R.drawable.skill_iq_trimmed : R.drawable.top_learner_badge;
-    }
+    public boolean getMisSkillIQ() { return mIsSkillIQ; }
 
     public String getSubText() {
-        return mIsSkillIQ ? getMhours_score() + " skill IQ Score, " + getMcountry() + "." : getMhours_score() + " learning hours, " + getMcountry() + ".";
+        return getMisSkillIQ() ? getMhours_score() + " " + mContext.getResources().getString(R.string.skill_iq_score) +", " + getMcountry() + "." : getMhours_score() + " " + mContext.getResources().getString(R.string.learning_hours) + ", " + getMcountry() + ".";
     }
 }

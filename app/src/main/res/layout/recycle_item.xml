@@ -1,49 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="15dp"
-    android:layout_marginEnd="15dp"
-    android:layout_marginBottom="10dp"
-    android:elevation="15dp">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="itemshelper"
+            type="com.danielezihe.gadsleaderboard.ItemsHelper" />
+
+        <variable
+            name="placeholder"
+            type="int" />
+    </data>
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp">
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="10dp"
+        android:elevation="15dp">
 
-        <ImageView
-            android:id="@+id/itemLogo"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="10dp"
-            android:contentDescription="@string/badge_image"
-            android:src="@drawable/top_learner_badge" />
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/itemLogo"
-            android:orientation="vertical">
+            android:layout_margin="4dp">
+            <ImageView
+                android:id="@+id/itemLogo"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="10dp"
+                android:contentDescription="@string/badge_image"
+                app:imageUrl="@{itemshelper.mbadgeURL}"
+                app:placeholder="@{placeholder}"/>
 
-            <TextView
-                android:id="@+id/nameText"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="13dp"
-                android:text="@string/john_doe"
-                android:textStyle="bold" />
+                android:layout_toEndOf="@+id/itemLogo"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/achievementText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/_223_learning_hours_kenya" />
+                <TextView
+                    android:id="@+id/nameText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="13dp"
+                    android:text="@{itemshelper.mname}"
+                    android:textStyle="bold" />
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/achievementText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@{itemshelper.getSubText}" />
 
-    </RelativeLayout>
+            </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>

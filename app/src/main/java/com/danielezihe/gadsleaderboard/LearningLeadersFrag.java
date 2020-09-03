@@ -1,27 +1,20 @@
 package com.danielezihe.gadsleaderboard;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.danielezihe.gadsleaderboard.databinding.ActivityLearningLeadersFragBinding;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,30 +29,31 @@ public class LearningLeadersFrag extends Fragment {
     public static final String URL = "https://gadsapi.herokuapp.com/api/hours";
     public static final String GET_GADS_TOP_LEARNERS_REQUEST = "GET_GADS_TOP_LEARNERS_REQUEST";
 
-    private RecyclerAdapter mRecyclerAdapter;
-    private ArrayList<ItemsHelper> mTopLearners = new ArrayList<>();;
+    private ArrayList<ItemsHelper> mTopLearners = new ArrayList<>();
 
-    private RecyclerView mRecyclerView;
-    private ProgressBar mProgressBar;
-    private LinearLayoutManager mLinearLayoutManager;
-
+    // Data-Binding layout generated class
+    ActivityLearningLeadersFragBinding mLearningLeadersFragBinding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_learning_leaders_frag, container, false);
+        // inflate view
+        mLearningLeadersFragBinding = ActivityLearningLeadersFragBinding.inflate(inflater);
 
-        // initialize views
-        mRecyclerView = v.findViewById(R.id.recyclerView_llf);
-        mProgressBar = v.findViewById(R.id.progressBar_llf);
+        // main method
+        getAndPopulateTopLearnersFromAPI();
 
-        // set up recycler view
-        setUpRecyclerView();
-
-        return v;
+        return mLearningLeadersFragBinding.getRoot();
     }
 
-    private void getTopLearnersFromAPI() {
+    private void initTopLearnersArrayList() {
+        // assign TopLearnersArrayList to Layout's TopLearnersArrayList
+        mLearningLeadersFragBinding.setTopLearnersArrList(mTopLearners);
+
+
+    }
+
+    private void getAndPopulateTopLearnersFromAPI() {
         // make a get request to the server, requesting for a jsonArray
         JsonArrayRequest jsonObjectRequestLL = new JsonArrayRequest(Request.Method.GET, URL, null, new Response.Listener<JSONArray>() {
             @Override
@@ -77,7 +71,7 @@ public class LearningLeadersFrag extends Fragment {
                         String badgeUrl = dataObj.getString("badgeUrl");
 
                         // add a new Item with the values
-                        mTopLearners.add(new ItemsHelper(name, hours, country, badgeUrl, false));
+                        mTopLearners.add(new ItemsHelper(getContext(), name, hours, country, badgeUrl, false));
 
                     }
                     // sort arrayList by the highest hours
@@ -89,10 +83,11 @@ public class LearningLeadersFrag extends Fragment {
                     });
 
                     // ArrayList has been populated, loading is done. Remove progressBar
-                    mProgressBar.setVisibility(View.GONE);
+                    mLearningLeadersFragBinding.progressBarLlf.setVisibility(View.GONE);
 
-                    // notify adapter that data has been added to the ArrayList
-                    mRecyclerAdapter.notifyDataSetChanged();
+                    // init LearnersArrayList with populated ArrayList.
+                    initTopLearnersArrayList();
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                     System.err.println(e.getMessage());
@@ -111,24 +106,4 @@ public class LearningLeadersFrag extends Fragment {
         jsonObjectRequestLL.setTag(GET_GADS_TOP_LEARNERS_REQUEST);
         MySingleTon.getInstance(getContext()).addToRequestQue(jsonObjectRequestLL);
     }
-
-    private void setUpRecyclerView() {
-        mRecyclerView.setHasFixedSize(true);
-
-        // initialize linear layout manager passing getContext() as the param
-        mLinearLayoutManager = new LinearLayoutManager(getContext());
-
-        // initialize custom recycler Adapter
-        mRecyclerAdapter = new RecyclerAdapter(getContext(), mTopLearners);
-
-        // assign my layout manager to recyclerView
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
-
-        // assign custom recycler adapter to recycler view
-        mRecyclerView.setAdapter(mRecyclerAdapter);
-
-        // populate ArrayList with values from gads-api.
-        getTopLearnersFromAPI();
-    }
-
 }
