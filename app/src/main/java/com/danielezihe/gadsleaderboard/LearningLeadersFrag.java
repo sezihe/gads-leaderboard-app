@@ -28,6 +28,7 @@ public class LearningLeadersFrag extends Fragment {
 
     public static final String URL = "https://gadsapi.herokuapp.com/api/hours";
     public static final String GET_GADS_TOP_LEARNERS_REQUEST = "GET_GADS_TOP_LEARNERS_REQUEST";
+    public static final String TOP_LEARNERS_ARRAY_LIST_KEY = "topLearnersArrayList";
 
     private ArrayList<ItemsHelper> mTopLearners = new ArrayList<>();
 
@@ -40,17 +41,39 @@ public class LearningLeadersFrag extends Fragment {
         // inflate view
         mLearningLeadersFragBinding = ActivityLearningLeadersFragBinding.inflate(inflater);
 
-        // main method
-        getAndPopulateTopLearnersFromAPI();
+        // check if activity was destroyed and is being re-created because of a configuration change
+        if(savedInstanceState == null || !savedInstanceState.containsKey(TOP_LEARNERS_ARRAY_LIST_KEY)) {
+            // call the main method
+            getAndPopulateTopLearnersFromAPI();
+        } else {
+            // restore Saved Instance
+            handleRestoreState(savedInstanceState);
+        }
 
         return mLearningLeadersFragBinding.getRoot();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        // save arrayList containing data
+        outState.putParcelableArrayList(TOP_LEARNERS_ARRAY_LIST_KEY, mTopLearners);
+        super.onSaveInstanceState(outState);
     }
 
     private void initTopLearnersArrayList() {
         // assign TopLearnersArrayList to Layout's TopLearnersArrayList
         mLearningLeadersFragBinding.setTopLearnersArrList(mTopLearners);
+    }
 
+    private void handleRestoreState(@NonNull Bundle savedInstanceState) {
+        // get savedStateArrayList and set it
+        mTopLearners = savedInstanceState.getParcelableArrayList(TOP_LEARNERS_ARRAY_LIST_KEY);
 
+        // remove progressBar
+        mLearningLeadersFragBinding.progressBarLlf.setVisibility(View.GONE);
+
+        // init LearnersArrayList with populated ArrayList.
+        initTopLearnersArrayList();
     }
 
     private void getAndPopulateTopLearnersFromAPI() {
@@ -59,6 +82,7 @@ public class LearningLeadersFrag extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
                 try {
+                    // just 20 records, so we can afford to run this on main thread.
                     // loop through all values in the received jsonArray
                     for (int i = 0; i < response.length(); i++) {
                         // get objects from jsonArray

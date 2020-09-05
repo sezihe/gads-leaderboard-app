@@ -14,6 +14,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.danielezihe.gadsleaderboard.databinding.ActivitySkillIqLeadersFragBinding;
 
 import org.json.JSONArray;
@@ -28,6 +29,7 @@ public class SkillIQLeadersFrag extends Fragment {
 
     public static final String URL = "https://gadsapi.herokuapp.com/api/skilliq";
     public static final String GET_GADS_TOP_SKILLIQ_REQUEST = "GET_GADS_TOP_SKILLIQ_REQUEST";
+    public static final String TOP_SKILL_IQ_ARRAY_LIST_KEY = "topSkillIQArrayList";
 
     private ArrayList<ItemsHelper> mTopSkillIQ = new ArrayList<>();
 
@@ -40,15 +42,39 @@ public class SkillIQLeadersFrag extends Fragment {
         // inflate view
         mActivitySkillIqLeadersFragBinding = ActivitySkillIqLeadersFragBinding.inflate(inflater);
 
-        // main method
-        getAndPopulateTopSkillIqFromAPI();
+        // check if activity was destroyed and is being re-created because of a configuration change
+        if(savedInstanceState == null || !savedInstanceState.containsKey(TOP_SKILL_IQ_ARRAY_LIST_KEY)) {
+            // call the main method
+            getAndPopulateTopSkillIqFromAPI();
+        } else {
+            // restore Saved Instance
+            handleRestoreState(savedInstanceState);
+        }
 
         return mActivitySkillIqLeadersFragBinding.getRoot();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        // save arrayList containing data
+        outState.putParcelableArrayList(TOP_SKILL_IQ_ARRAY_LIST_KEY, mTopSkillIQ);
+        super.onSaveInstanceState(outState);
     }
 
     private void initTopSkillIQArrayList() {
         // assign TopSkillIQArrayList to Layout's TopSkillIQArrayList
         mActivitySkillIqLeadersFragBinding.setSkillIqLearnersArrList(mTopSkillIQ);
+    }
+
+    private void handleRestoreState(@NonNull Bundle savedInstanceState) {
+        // get savedStateArrayList and set it
+        mTopSkillIQ = savedInstanceState.getParcelableArrayList(TOP_SKILL_IQ_ARRAY_LIST_KEY);
+
+        // remove progressBar
+        mActivitySkillIqLeadersFragBinding.progressBarSilf.setVisibility(View.GONE);
+
+        // init SkillIQArrayList with populated ArrayList.
+        initTopSkillIQArrayList();
     }
 
     private void getAndPopulateTopSkillIqFromAPI() {
@@ -57,6 +83,7 @@ public class SkillIQLeadersFrag extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
                 try {
+                    // just 20 records, so we can afford to run this on main thread.
                     // loop through all values in the received jsonArray
                     for (int i = 0; i < response.length(); i++) {
                         // get objects from jsonArray
