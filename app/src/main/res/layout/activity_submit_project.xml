@@ -3,6 +3,9 @@
 
     <data>
 
+        <variable
+            name="submit_pro_act_view_model"
+            type="com.danielezihe.gadsleaderboard.SubmitProjectActivityViewModel" />
     </data>
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -92,7 +95,8 @@
                             android:layout_height="match_parent"
                             android:inputType="text"
                             android:textColor="@color/black"
-                            android:textCursorDrawable="@null" />
+                            android:textCursorDrawable="@null"
+                            android:text="@={submit_pro_act_view_model.fname}"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -119,7 +123,8 @@
                             android:layout_height="match_parent"
                             android:inputType="text"
                             android:textColor="@color/black"
-                            android:textCursorDrawable="@null" />
+                            android:textCursorDrawable="@null"
+                            android:text="@={submit_pro_act_view_model.lname}"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -143,7 +148,8 @@
                         android:layout_height="match_parent"
                         android:inputType="textEmailAddress"
                         android:textColor="@color/black"
-                        android:textCursorDrawable="@null" />
+                        android:textCursorDrawable="@null"
+                        android:text="@={submit_pro_act_view_model.emailAddress}"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -165,7 +171,8 @@
                         android:layout_height="match_parent"
                         android:inputType="textUri"
                         android:textColor="@color/black"
-                        android:textCursorDrawable="@null" />
+                        android:textCursorDrawable="@null"
+                        android:text="@={submit_pro_act_view_model.projectLink}"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
