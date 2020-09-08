@@ -1,6 +1,7 @@
 package com.danielezihe.gadsleaderboard;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +11,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.danielezihe.gadsleaderboard.databinding.ActivitySkillIqLeadersFragBinding;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +36,7 @@ public class SkillIQLeadersFrag extends Fragment {
     public static final String TOP_SKILL_IQ_ARRAY_LIST_KEY = "topSkillIQArrayList";
 
     private ArrayList<ItemsHelper> mTopSkillIQ = new ArrayList<>();
+    int retryCount = 0;
 
     // Data-Binding layout generated class
     ActivitySkillIqLeadersFragBinding mActivitySkillIqLeadersFragBinding;
@@ -77,7 +82,7 @@ public class SkillIQLeadersFrag extends Fragment {
         initTopSkillIQArrayList();
     }
 
-    private void getAndPopulateTopSkillIqFromAPI() {
+    protected void getAndPopulateTopSkillIqFromAPI() {
         // make a get request to the server, requesting for a jsonArray
         JsonArrayRequest jsonObjectRequestSIQ = new JsonArrayRequest(Request.Method.GET, URL, null, new Response.Listener<JSONArray>() {
             @Override
@@ -120,13 +125,27 @@ public class SkillIQLeadersFrag extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                if(error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    if(retryCount <= 4) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                getAndPopulateTopSkillIqFromAPI();
+                                retryCount++;
+                            }
+                        }, 3000);
+                    } else {
+                        mActivitySkillIqLeadersFragBinding.progressBarSilf.setVisibility(View.GONE);
+                        ((MainActivity)getActivity()).retry("silf");
+                    }
+                }
                 error.printStackTrace();
                 System.err.println(error.getMessage());
             }
         });
 
         // set retry policy, tag and add to singleton request que
-        jsonObjectRequestSIQ.setRetryPolicy(new DefaultRetryPolicy());
+        jsonObjectRequestSIQ.setRetryPolicy(new DefaultRetryPolicy(5000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequestSIQ.setTag(GET_GADS_TOP_SKILLIQ_REQUEST);
         MySingleTon.getInstance(getContext()).addToRequestQue(jsonObjectRequestSIQ);
     }

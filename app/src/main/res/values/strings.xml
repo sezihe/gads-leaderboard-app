@@ -20,4 +20,5 @@
     <string name="submission_successful">Submission Successful</string>
     <string name="submission_not_successful">Submission not Successful</string>
     <string name="cancel_image_button">Cancel Image Button</string>
+    <string name="splash_screen_gads_logo">Splash Screen Gads Logo</string>
 </resources>

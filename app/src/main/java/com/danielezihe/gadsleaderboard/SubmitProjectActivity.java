@@ -10,6 +10,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.URLUtil;
@@ -73,7 +74,7 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
             @Override
             public void onResponse(String response) {
                 // TODO: handle success and error messages
-
+                Log.d("drexx", "onResponse: " + response);
                 // if success
                 mSuccessErrorAlertDialog = new SuccessErrorAlertDialog(SubmitProjectActivity.this, "good");
                 Objects.requireNonNull(mSuccessErrorAlertDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -109,8 +110,6 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
         stringRequest.setRetryPolicy(new DefaultRetryPolicy());
         stringRequest.setTag(SUBMIT_PROJECT_REQUEST);
         MySingleTon.getInstance(getApplicationContext()).addToRequestQue(stringRequest);
-
-
     }
 
 
@@ -193,7 +192,8 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
     @Override
     public void onConfirmSubmitClick() {
         // confirmed submit project
-        submitProject();
+        //submitProject();
+        Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
     }
 
     // validate First Name field and set error if needed

@@ -1,6 +1,7 @@
 package com.danielezihe.gadsleaderboard;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,30 +11,34 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.danielezihe.gadsleaderboard.databinding.ActivityLearningLeadersFragBinding;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Objects;
 
 public class LearningLeadersFrag extends Fragment {
 
     public static final String URL = "https://gadsapi.herokuapp.com/api/hours";
     public static final String GET_GADS_TOP_LEARNERS_REQUEST = "GET_GADS_TOP_LEARNERS_REQUEST";
     public static final String TOP_LEARNERS_ARRAY_LIST_KEY = "topLearnersArrayList";
-
-    private ArrayList<ItemsHelper> mTopLearners = new ArrayList<>();
-
+    int retryCount = 0;
     // Data-Binding layout generated class
     ActivityLearningLeadersFragBinding mLearningLeadersFragBinding;
+    private ArrayList<ItemsHelper> mTopLearners = new ArrayList<>();
 
     @Nullable
     @Override
@@ -42,7 +47,7 @@ public class LearningLeadersFrag extends Fragment {
         mLearningLeadersFragBinding = ActivityLearningLeadersFragBinding.inflate(inflater);
 
         // check if activity was destroyed and is being re-created because of a configuration change
-        if(savedInstanceState == null || !savedInstanceState.containsKey(TOP_LEARNERS_ARRAY_LIST_KEY)) {
+        if (savedInstanceState == null || !savedInstanceState.containsKey(TOP_LEARNERS_ARRAY_LIST_KEY)) {
             // call the main method
             getAndPopulateTopLearnersFromAPI();
         } else {
@@ -76,7 +81,7 @@ public class LearningLeadersFrag extends Fragment {
         initTopLearnersArrayList();
     }
 
-    private void getAndPopulateTopLearnersFromAPI() {
+    protected void getAndPopulateTopLearnersFromAPI() {
         // make a get request to the server, requesting for a jsonArray
         JsonArrayRequest jsonObjectRequestLL = new JsonArrayRequest(Request.Method.GET, URL, null, new Response.Listener<JSONArray>() {
             @Override
@@ -112,6 +117,14 @@ public class LearningLeadersFrag extends Fragment {
                     // init LearnersArrayList with populated ArrayList.
                     initTopLearnersArrayList();
 
+                    // remove splash screen (wait for 550ms. nothing serious. just aesthetics)
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((MainActivity) Objects.requireNonNull(getActivity())).removeSplashScreen();
+                        }
+                    }, 550);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                     System.err.println(e.getMessage());
@@ -120,13 +133,27 @@ public class LearningLeadersFrag extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                if(error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    if(retryCount <= 4) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                getAndPopulateTopLearnersFromAPI();
+                                retryCount++;
+                            }
+                        }, 3000);
+                    } else {
+                        mLearningLeadersFragBinding.progressBarLlf.setVisibility(View.GONE);
+                        ((MainActivity)getActivity()).retry("llf");
+                    }
+                }
                 error.printStackTrace();
                 System.err.println(error.getMessage());
             }
         });
 
         // set retry policy, tag and add to singleton request que
-        jsonObjectRequestLL.setRetryPolicy(new DefaultRetryPolicy());
+        jsonObjectRequestLL.setRetryPolicy(new DefaultRetryPolicy(5000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         jsonObjectRequestLL.setTag(GET_GADS_TOP_LEARNERS_REQUEST);
         MySingleTon.getInstance(getContext()).addToRequestQue(jsonObjectRequestLL);
     }
