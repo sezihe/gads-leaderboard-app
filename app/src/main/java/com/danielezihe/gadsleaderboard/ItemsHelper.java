@@ -6,12 +6,22 @@ import android.os.Parcelable;
 
 public class ItemsHelper implements Parcelable {
 
+    public static final Creator<ItemsHelper> CREATOR = new Creator<ItemsHelper>() {
+        @Override
+        public ItemsHelper createFromParcel(Parcel parcel) {
+            return new ItemsHelper(parcel);
+        }
+
+        @Override
+        public ItemsHelper[] newArray(int i) {
+            return new ItemsHelper[i];
+        }
+    };
     private String mname;
     private String mhours_or_score;
     private String mcountry;
     private String mbadgeURL;
     private boolean mIsSkillIQ;
-
     private Context mContext;
 
     // constructor
@@ -50,10 +60,12 @@ public class ItemsHelper implements Parcelable {
         return mbadgeURL;
     }
 
-    public boolean getMisSkillIQ() { return mIsSkillIQ; }
+    public boolean getMisSkillIQ() {
+        return mIsSkillIQ;
+    }
 
     public String getSubText() {
-        return getMisSkillIQ() ? getMhours_score() + " " + mContext.getResources().getString(R.string.skill_iq_score) +", " + getMcountry() + "." : getMhours_score() + " " + mContext.getResources().getString(R.string.learning_hours) + ", " + getMcountry() + ".";
+        return getMisSkillIQ() ? getMhours_score() + " " + mContext.getResources().getString(R.string.skill_iq_score) + ", " + getMcountry() + "." : getMhours_score() + " " + mContext.getResources().getString(R.string.learning_hours) + ", " + getMcountry() + ".";
     }
 
     // parcelable methods
@@ -61,7 +73,6 @@ public class ItemsHelper implements Parcelable {
     public int describeContents() {
         return 0;
     }
-
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
@@ -73,16 +84,4 @@ public class ItemsHelper implements Parcelable {
         parcel.writeInt(getMisSkillIQ() ? 1 : 0);
         parcel.writeString(getSubText());
     }
-
-    public static final Creator<ItemsHelper> CREATOR = new Creator<ItemsHelper>() {
-        @Override
-        public ItemsHelper createFromParcel(Parcel parcel) {
-            return new ItemsHelper(parcel);
-        }
-
-        @Override
-        public ItemsHelper[] newArray(int i) {
-            return new ItemsHelper[i];
-        }
-    };
 }

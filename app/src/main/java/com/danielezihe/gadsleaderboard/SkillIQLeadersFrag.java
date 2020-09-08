@@ -17,9 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
 import com.danielezihe.gadsleaderboard.databinding.ActivitySkillIqLeadersFragBinding;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,18 +26,17 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Objects;
 
 public class SkillIQLeadersFrag extends Fragment {
 
     public static final String URL = "https://gadsapi.herokuapp.com/api/skilliq";
     public static final String GET_GADS_TOP_SKILLIQ_REQUEST = "GET_GADS_TOP_SKILLIQ_REQUEST";
     public static final String TOP_SKILL_IQ_ARRAY_LIST_KEY = "topSkillIQArrayList";
-
-    private ArrayList<ItemsHelper> mTopSkillIQ = new ArrayList<>();
     int retryCount = 0;
-
     // Data-Binding layout generated class
     ActivitySkillIqLeadersFragBinding mActivitySkillIqLeadersFragBinding;
+    private ArrayList<ItemsHelper> mTopSkillIQ = new ArrayList<>();
 
     @Nullable
     @Override
@@ -48,7 +45,7 @@ public class SkillIQLeadersFrag extends Fragment {
         mActivitySkillIqLeadersFragBinding = ActivitySkillIqLeadersFragBinding.inflate(inflater);
 
         // check if activity was destroyed and is being re-created because of a configuration change
-        if(savedInstanceState == null || !savedInstanceState.containsKey(TOP_SKILL_IQ_ARRAY_LIST_KEY)) {
+        if (savedInstanceState == null || !savedInstanceState.containsKey(TOP_SKILL_IQ_ARRAY_LIST_KEY)) {
             // call the main method
             getAndPopulateTopSkillIqFromAPI();
         } else {
@@ -125,18 +122,21 @@ public class SkillIQLeadersFrag extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    if(retryCount <= 4) {
+                // check for network related errors
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    if (retryCount <= 4) {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                // retry request
                                 getAndPopulateTopSkillIqFromAPI();
                                 retryCount++;
                             }
                         }, 3000);
                     } else {
                         mActivitySkillIqLeadersFragBinding.progressBarSilf.setVisibility(View.GONE);
-                        ((MainActivity)getActivity()).retry("silf");
+                        // call parent activity's retry method
+                        ((MainActivity) Objects.requireNonNull(getActivity())).retry("silf");
                     }
                 }
                 error.printStackTrace();

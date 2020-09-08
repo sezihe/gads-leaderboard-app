@@ -18,13 +18,11 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.danielezihe.gadsleaderboard.databinding.ActivityLearningLeadersFragBinding;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -133,18 +131,21 @@ public class LearningLeadersFrag extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                if(error instanceof TimeoutError || error instanceof NoConnectionError) {
-                    if(retryCount <= 4) {
+                // check for network related errors
+                if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                    if (retryCount <= 4) {
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                // retry request
                                 getAndPopulateTopLearnersFromAPI();
                                 retryCount++;
                             }
                         }, 3000);
                     } else {
                         mLearningLeadersFragBinding.progressBarLlf.setVisibility(View.GONE);
-                        ((MainActivity)getActivity()).retry("llf");
+                        // call parent activity's retry method
+                        ((MainActivity) Objects.requireNonNull(getActivity())).retry("llf");
                     }
                 }
                 error.printStackTrace();

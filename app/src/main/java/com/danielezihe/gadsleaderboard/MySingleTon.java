@@ -9,8 +9,8 @@ import com.android.volley.toolbox.Volley;
 public class MySingleTon {
 
     private static MySingleTon mySingleTon;
-    private RequestQueue requestQueue;
     private static Context mctx;
+    private RequestQueue requestQueue;
 
     private MySingleTon(Context context) {
         this.mctx = context;
@@ -18,18 +18,18 @@ public class MySingleTon {
 
     }
 
-    public RequestQueue getRequestQueue() {
-        if (requestQueue == null) {
-            requestQueue = Volley.newRequestQueue(mctx.getApplicationContext());
-        }
-        return requestQueue;
-    }
-
     public static synchronized MySingleTon getInstance(Context context) {
         if (mySingleTon == null) {
             mySingleTon = new MySingleTon(context);
         }
         return mySingleTon;
+    }
+
+    public RequestQueue getRequestQueue() {
+        if (requestQueue == null) {
+            requestQueue = Volley.newRequestQueue(mctx.getApplicationContext());
+        }
+        return requestQueue;
     }
 
     public <T> void addToRequestQue(Request<T> request) {

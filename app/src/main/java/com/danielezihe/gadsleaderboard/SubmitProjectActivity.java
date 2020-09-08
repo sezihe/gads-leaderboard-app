@@ -1,22 +1,23 @@
 package com.danielezihe.gadsleaderboard;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.URLUtil;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -24,12 +25,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.danielezihe.gadsleaderboard.databinding.ActivitySubmitProjectBinding;
 
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class SubmitProjectActivity extends AppCompatActivity implements InterfaceHelper{
+public class SubmitProjectActivity extends AppCompatActivity implements InterfaceHelper {
 
     private static final String URL = "https://docs.google.com/forms/d/e/1FAIpQLSf9d1TcNU6zc6KR8bSEM41Z1g1zl35cwZr2xyjIhaMAz8WChQ/formResponse";
     private static final String SUBMIT_PROJECT_REQUEST = "SUBMIT_PROJECT_REQUEST";
@@ -40,6 +40,7 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
     SubmitProjectActivityViewModel mSubmitProjectActivityViewModel;
     ConfirmAlertDialog mConfirmAlertDialog;
     SuccessErrorAlertDialog mSuccessErrorAlertDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,13 +55,9 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
             @Override
             public void onClick(View view) {
                 // add a safety check on all fields
-                if(validateFName() | validateLName() | validateEmail() | validateProjectLink()) {
+                if (validateFName() | validateLName() | validateEmail() | validateProjectLink()) {
                     Objects.requireNonNull(mConfirmAlertDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     mConfirmAlertDialog.show();
-                    Toast.makeText(getApplicationContext(), "First Name: " + getFname()
-                            +"\nLast Name: " + getLname()
-                            +"\nEmail Address: " + getEmailAddress()
-                            +"\nProject Link: " + getProjectLink(), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -73,7 +70,6 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                // TODO: handle success and error messages
                 Log.d("drexx", "onResponse: " + response);
                 // if success
                 mSuccessErrorAlertDialog = new SuccessErrorAlertDialog(SubmitProjectActivity.this, "good");
@@ -177,13 +173,13 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
     @Override
     public void onValidateEditText(String editTextName) {
         // using SubmitProjectActivityViewModel import to access it's static variables
-        if(editTextName.equals(SubmitProjectActivityViewModel.FIRST_NAME)) {
+        if (editTextName.equals(SubmitProjectActivityViewModel.FIRST_NAME)) {
             validateFName();
-        } else if(editTextName.equals(SubmitProjectActivityViewModel.LAST_NAME)) {
+        } else if (editTextName.equals(SubmitProjectActivityViewModel.LAST_NAME)) {
             validateLName();
-        } else if(editTextName.equals(SubmitProjectActivityViewModel.EMAIL)) {
+        } else if (editTextName.equals(SubmitProjectActivityViewModel.EMAIL)) {
             validateEmail();
-        } else if(editTextName.equals(SubmitProjectActivityViewModel.PROJECT_LINK)) {
+        } else if (editTextName.equals(SubmitProjectActivityViewModel.PROJECT_LINK)) {
             validateProjectLink();
         }
     }
@@ -192,13 +188,12 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
     @Override
     public void onConfirmSubmitClick() {
         // confirmed submit project
-        //submitProject();
-        Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
+        submitProject();
     }
 
     // validate First Name field and set error if needed
     boolean validateFName() {
-        if(getFname().isEmpty()) {
+        if (getFname().isEmpty()) {
             mB.fieldFname.setError("First Name cannot be empty");
             return false;
         } else {
@@ -210,7 +205,7 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
 
     // validate Last Name field and set error if needed
     boolean validateLName() {
-        if(getLname().isEmpty()) {
+        if (getLname().isEmpty()) {
             mB.fieldLname.setError("Last Name cannot be empty");
             return false;
         } else {
@@ -223,10 +218,10 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
     // validate Email field and set error if needed
     boolean validateEmail() {
         boolean valid = android.util.Patterns.EMAIL_ADDRESS.matcher(getEmailAddress()).matches();
-        if(getEmailAddress().isEmpty()) {
+        if (getEmailAddress().isEmpty()) {
             mB.fieldEmail.setError("Email Address cannot be empty");
             return false;
-        } else if (!valid){
+        } else if (!valid) {
             mB.fieldEmail.setError("Invalid Email Address");
             return false;
         } else {
@@ -239,7 +234,7 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
     // validate GitHub Link field and set error if needed
     boolean validateProjectLink() {
         boolean valid = URLUtil.isValidUrl(getProjectLink());
-        if(getProjectLink().isEmpty()) {
+        if (getProjectLink().isEmpty()) {
             mB.fieldGithubLink.setError("Github Link cannot be empty");
             return false;
         } else if (!valid) {

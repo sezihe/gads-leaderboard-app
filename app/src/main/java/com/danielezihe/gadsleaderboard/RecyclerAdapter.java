@@ -42,10 +42,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.RAVBin
         holder.mRecycleItemBinding.setItemshelper(itemsHelper);
 
         // set default placeholders from local directory
-        if(itemsHelper.getMisSkillIQ()) {
+        if (itemsHelper.getMisSkillIQ()) {
             holder.mRecycleItemBinding.setPlaceholder(R.drawable.skill_iq_trimmed);
-        }
-        else {
+        } else {
             holder.mRecycleItemBinding.setPlaceholder(R.drawable.top_learner_badge);
         }
 
