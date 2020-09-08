@@ -38,7 +38,7 @@
 
                 <ImageView
                     android:layout_width="250dp"
-                    android:layout_height="60dp"
+                    android:layout_height="55dp"
                     android:layout_centerInParent="true"
                     android:contentDescription="@string/gads_logo_desc"
                     android:src="@drawable/gads_header" />
@@ -97,7 +97,8 @@
                             android:inputType="text"
                             android:text="@={submit_pro_act_view_model.fname}"
                             android:textColor="@color/black"
-                            android:textCursorDrawable="@null" />
+                            android:textCursorDrawable="@null"
+                            android:textSize="17sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -125,7 +126,8 @@
                             android:inputType="text"
                             android:text="@={submit_pro_act_view_model.lname}"
                             android:textColor="@color/black"
-                            android:textCursorDrawable="@null" />
+                            android:textCursorDrawable="@null"
+                            android:textSize="17sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -150,7 +152,8 @@
                         android:inputType="textEmailAddress"
                         android:text="@={submit_pro_act_view_model.emailAddress}"
                         android:textColor="@color/black"
-                        android:textCursorDrawable="@null" />
+                        android:textCursorDrawable="@null"
+                        android:textSize="17sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -173,7 +176,8 @@
                         android:inputType="textUri"
                         android:text="@={submit_pro_act_view_model.projectLink}"
                         android:textColor="@color/black"
-                        android:textCursorDrawable="@null" />
+                        android:textCursorDrawable="@null"
+                        android:textSize="17sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -182,8 +186,8 @@
 
             <Button
                 android:id="@+id/submit_project_btn"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
+                android:layout_width="250dp"
+                android:layout_height="55dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/main_submit_btn_gradient_bk"

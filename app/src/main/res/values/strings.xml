@@ -15,4 +15,9 @@
     <string name="project_submission">Project Submission</string>
     <string name="learning_hours">learning hours</string>
     <string name="skill_iq_score">skill IQ Score</string>
+    <string name="are_you_sure">Are you sure</string>
+    <string name="yes">Yes</string>
+    <string name="submission_successful">Submission Successful</string>
+    <string name="submission_not_successful">Submission not Successful</string>
+    <string name="cancel_image_button">Cancel Image Button</string>
 </resources>

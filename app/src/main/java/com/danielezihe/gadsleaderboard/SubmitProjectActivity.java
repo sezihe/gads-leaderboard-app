@@ -5,8 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.URLUtil;
@@ -23,6 +26,7 @@ import com.danielezihe.gadsleaderboard.databinding.ActivitySubmitProjectBinding;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class SubmitProjectActivity extends AppCompatActivity implements InterfaceHelper{
 
@@ -33,6 +37,8 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
     ActivitySubmitProjectBinding mB;
 
     SubmitProjectActivityViewModel mSubmitProjectActivityViewModel;
+    ConfirmAlertDialog mConfirmAlertDialog;
+    SuccessErrorAlertDialog mSuccessErrorAlertDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,14 +47,15 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
         mSubmitProjectActivityViewModel = new SubmitProjectActivityViewModel(this);
         mB.setSubmitProActViewModel(mSubmitProjectActivityViewModel);
 
+        mConfirmAlertDialog = new ConfirmAlertDialog(this, this);
+
         mB.submitProjectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // add a safety check on all fields
-                if(!validateFName() | !validateLName() | !validateEmail() | !validateProjectLink()) {
-                    return;
-                } else {
-                    submitProject();
+                if(validateFName() | validateLName() | validateEmail() | validateProjectLink()) {
+                    Objects.requireNonNull(mConfirmAlertDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    mConfirmAlertDialog.show();
                     Toast.makeText(getApplicationContext(), "First Name: " + getFname()
                             +"\nLast Name: " + getLname()
                             +"\nEmail Address: " + getEmailAddress()
@@ -66,11 +73,19 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
             @Override
             public void onResponse(String response) {
                 // TODO: handle success and error messages
+
+                // if success
+                mSuccessErrorAlertDialog = new SuccessErrorAlertDialog(SubmitProjectActivity.this, "good");
+                Objects.requireNonNull(mSuccessErrorAlertDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                mSuccessErrorAlertDialog.show();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                // error
+                mSuccessErrorAlertDialog = new SuccessErrorAlertDialog(SubmitProjectActivity.this, "bad");
+                Objects.requireNonNull(mSuccessErrorAlertDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                mSuccessErrorAlertDialog.show();
             }
         }) {
             @Override
@@ -159,7 +174,7 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
         return mSubmitProjectActivityViewModel.getProjectLink().trim();
     }
 
-    // would be called everytime an editText is updated
+    // would be called every time an editText is updated
     @Override
     public void onValidateEditText(String editTextName) {
         // using SubmitProjectActivityViewModel import to access it's static variables
@@ -172,6 +187,13 @@ public class SubmitProjectActivity extends AppCompatActivity implements Interfac
         } else if(editTextName.equals(SubmitProjectActivityViewModel.PROJECT_LINK)) {
             validateProjectLink();
         }
+    }
+
+    // would be called when submit is confirmed
+    @Override
+    public void onConfirmSubmitClick() {
+        // confirmed submit project
+        submitProject();
     }
 
     // validate First Name field and set error if needed
